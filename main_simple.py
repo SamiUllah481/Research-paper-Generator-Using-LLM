@@ -26,8 +26,9 @@ class ResearchResponse(BaseModel):
     tools_used: List[str]
 
 
-# Initialize the Google GenAI client
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+# Initialize the Google GenAI client lazily when needed
+def get_genai_client():
+    return genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 SYSTEM_PROMPT = """
@@ -94,6 +95,7 @@ def generate_research(query: str, model: str = "gemini-2.5-flash") -> ResearchRe
         "Using the above tool outputs where relevant, produce the full research paper as a single JSON object following the schema exactly."
     )
 
+    client = get_genai_client()
     final_resp = client.models.generate_content(model=model, contents=final_prompt)
     # Extract text from response (handle different shapes)
     try:

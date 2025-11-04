@@ -3,5 +3,5 @@ python-dotenv
 pydantic
 requests
 fpdf
-google-genai
+google-generativeai
 pytest
