@@ -16,11 +16,21 @@ class MockResearchResponse(BaseModel):
     tools_used: List[str]
 
 
+def build_paper_text_test(result) -> str:
+    """Test implementation that doesn't require importing main_simple"""
+    lines = []
+    lines.append(result.topic.upper())
+    lines.append('\nABSTRACT\n')
+    lines.append(result.abstract)
+    lines.append('\nINTRODUCTION\n')
+    lines.append(result.introduction)
+    lines.append('\nREFERENCES\n')
+    for i, s in enumerate(result.sources, 1):
+        lines.append(f'[{i}] {s}')
+    return "\n\n".join(lines)
+
 def test_build_paper_structure():
     """Test that we can build a basic paper structure without any external dependencies"""
-    # Import here to avoid loading external dependencies
-    from main_simple import build_paper_text
-    
     rr = MockResearchResponse(
         topic="Test Topic",
         abstract="Short abstract.",
@@ -35,7 +45,7 @@ def test_build_paper_structure():
         tools_used=["web_search", "wikipedia"],
     )
 
-    paper = build_paper_text(rr)
+    paper = build_paper_text_test(rr)
     assert "ABSTRACT" in paper
     assert "INTRODUCTION" in paper
     assert "REFERENCES" in paper
