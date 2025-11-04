@@ -9,8 +9,6 @@ from pydantic import BaseModel
 
 from tools import search_tool, wiki_tool, save_tool, web_search_tool
 
-load_dotenv()
-
 
 class ResearchResponse(BaseModel):
     topic: str
@@ -28,7 +26,11 @@ class ResearchResponse(BaseModel):
 
 # Initialize the Google GenAI client lazily when needed
 def get_genai_client():
-    return genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+    load_dotenv()  # Load environment variables only when needed
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise ValueError("GOOGLE_API_KEY environment variable not set")
+    return genai.Client(api_key=api_key)
 
 
 SYSTEM_PROMPT = """
